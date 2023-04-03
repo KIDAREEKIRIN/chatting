@@ -6,7 +6,7 @@ import java.net.UnknownHostException;
 
 public class ChatClient {
     public static String UserID;
-    private static String IP = "127.0.0.1";
+    private static String IP = "172.30.1.48";
     private static int PORT = 8888;
 
     public static void main(String[] args) {
