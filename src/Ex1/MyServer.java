@@ -11,16 +11,16 @@ import java.util.Date;
 public class MyServer {
     public static ArrayList<PrintWriter> m_OutputList;
 
-//    private static final int PORT = 8888;
+    private static final int PORT = 8888;
 
     public static void main(String[] args){
-//        ServerSocket serverSocket = null;
+        ServerSocket serverSocket = null;
 
         m_OutputList = new ArrayList<PrintWriter>();
 
         try{
 
-//            serverSocket = new ServerSocket();
+            serverSocket = new ServerSocket();
             ServerSocket s_socket = new ServerSocket(8888); // ServerSocket 을 포트번호 8888로 생성한다.
             System.out.println(getTime()+"서버 준비 완료...");
             System.out.println(getTime()+"클라이언트 접속 대기중...");
