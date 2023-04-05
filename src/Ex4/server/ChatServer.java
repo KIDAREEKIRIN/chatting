@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class ChatServer {
 
-    public static ArrayList<PrintWriter> m_OutputList;
+    public static ArrayList<PrintWriter> m_OutputList; // 채팅 내역.
     private static int PORT = 8888;
     public static void main(String[] args) {
 
