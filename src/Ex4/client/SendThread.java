@@ -13,7 +13,6 @@ public class SendThread extends Thread{
 
         try {
             BufferedReader tmpbuf = new BufferedReader(new InputStreamReader(System.in));
-
             PrintWriter sendWriter = new PrintWriter(m_Socket.getOutputStream());
 
             String sendString;
@@ -21,17 +20,14 @@ public class SendThread extends Thread{
             System.out.println("사용할 ID를 입력해주세요 : ");
             ChatClient.UserID = tmpbuf.readLine();
 
-            sendWriter.println("IDhighkrs12345" + ChatClient.UserID);
+            sendWriter.println( ChatClient.UserID);
             sendWriter.flush();
 
             while (true) {
-
                 sendString = tmpbuf.readLine();
-
                 if(sendString.equals("exit")) {
                     break;
                 }
-
                 sendWriter.println(sendString);
                 sendWriter.flush();
             }

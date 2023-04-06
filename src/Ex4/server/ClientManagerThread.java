@@ -23,6 +23,7 @@ public class ClientManagerThread extends Thread{
             while(true) {
                 text = tmpbuffer.readLine();
 
+                // 읽는 내용이 없다면.
                 if(text == null) {
                     System.out.println(m_ID + "이(가) 나갔습니다.");
                     for (int i = 0; i < ChatServer.m_OutputList.size(); i++) {
@@ -31,6 +32,7 @@ public class ClientManagerThread extends Thread{
                     }
                     break;
                 }
+
                 String[] split = text.split("highkrs12345");
                 if(split.length == 2 && split[0].equals("ID")) {
                     m_ID = split[1];
@@ -49,6 +51,7 @@ public class ClientManagerThread extends Thread{
 
             }
 
+            // 채팅방 나가면 채팅내역 지우기.
             ChatServer.m_OutputList.remove(new PrintWriter(m_socket.getOutputStream()));
             m_socket.close();
 

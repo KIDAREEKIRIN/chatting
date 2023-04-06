@@ -6,17 +6,19 @@ import java.net.UnknownHostException;
 
 public class ChatClient {
     public static String UserID;
-    private static String IP = "172.30.1.48";
+    private static String IP = "127.0.0.1";
     private static int PORT = 8888;
 
     public static void main(String[] args) {
         try {
-
+            //소켓에 IP 포트 연결하기.
             Socket c_socket = new Socket(IP, PORT);
 
+            // 수신 Thread.
             ReceiveThread rec_thread = new ReceiveThread();
             rec_thread.setSocket(c_socket);
 
+            // 송신 Thread.
             SendThread send_thread = new SendThread();
             send_thread.setSocket(c_socket);
 

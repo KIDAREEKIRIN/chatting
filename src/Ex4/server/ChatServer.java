@@ -16,12 +16,15 @@ public class ChatServer {
 
         try {
 
-            ServerSocket s_socket = new ServerSocket(PORT);
+            ServerSocket s_socket = new ServerSocket(PORT); // 서버소켓 포트에 연결.
+            System.out.println("클라이언트 연결 대기중.");
 
             while (true) {
                 Socket c_socket = s_socket.accept();
+                System.out.println("클라이언트 연결 완료. 채팅을 시작하세요.");
+                // 서버 thread.
                 ClientManagerThread c_thread = new ClientManagerThread();
-                c_thread.setSocket(c_socket);
+                c_thread.setSocket(c_socket); //
 
                 m_OutputList.add(new PrintWriter(c_socket.getOutputStream()));
                 c_thread.start();
