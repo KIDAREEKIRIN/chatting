@@ -22,6 +22,8 @@ public class ChatServer {
             while (true) {
                 Socket c_socket = s_socket.accept();
                 System.out.println("클라이언트 연결 완료. 채팅을 시작하세요.");
+                System.out.println("현재 주소: " + c_socket.getLocalAddress());
+                System.out.println("현재 포트: " + c_socket.getLocalPort());
                 // 서버 thread.
                 ClientManagerThread c_thread = new ClientManagerThread();
                 c_thread.setSocket(c_socket); //
