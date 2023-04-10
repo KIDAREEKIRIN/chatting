@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ClientManagerThread extends Thread{
 
     private Socket m_socket;
     private String m_ID;
+
 
     @Override
     public void run() {

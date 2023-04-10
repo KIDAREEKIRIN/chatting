@@ -20,7 +20,7 @@ public class SendThread extends Thread{
             System.out.println("사용할 ID를 입력해주세요 : ");
             ChatClient.UserID = tmpbuf.readLine();
 
-            sendWriter.println( ChatClient.UserID);
+            sendWriter.println("IDhighkrs12345"+ChatClient.UserID);
             sendWriter.flush();
 
             while (true) {

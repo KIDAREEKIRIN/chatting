@@ -11,6 +11,7 @@ public class ChatServer {
     public static ArrayList<PrintWriter> m_OutputList; // 채팅 내역.
     private static int PORT = 8888;
     public static void main(String[] args) {
+        // HashMap을 사용해야한다.
 
         m_OutputList = new ArrayList<PrintWriter>();
 
