@@ -13,18 +13,17 @@ public class ChatClient {
     public static void main(String[] args) {
         try {
             //소켓에 IP 포트 연결하기.
-            Socket c_socket = new Socket(IP, PORT);
+            Socket c_socket = new Socket(IP, PORT); // 클라이언트 소켓 생성.
             System.out.println("현재 주소 getInetAddress() : " + c_socket.getInetAddress());
             System.out.println("현재 주소 getLocalAddress() : " + c_socket.getLocalAddress());
             System.out.println("현재 포트 : " + c_socket.getLocalPort());
-//            c_socket.getLocalPort();
 
             // 수신 Thread.
-            ReceiveThread rec_thread = new ReceiveThread();
+            ReceiveThread rec_thread = new ReceiveThread(); // 쓰레드 생성.
             rec_thread.setSocket(c_socket);
 
             // 송신 Thread.
-            SendThread send_thread = new SendThread();
+            SendThread send_thread = new SendThread(); // 쓰레드 생성.
             send_thread.setSocket(c_socket);
 
             // thread 시작.
