@@ -1,4 +1,4 @@
-package Ex3;
+package Ex3.Server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
