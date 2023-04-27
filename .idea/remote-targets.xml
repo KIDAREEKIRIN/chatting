@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteTargetsManager">
+    <targets>
+      <target name="ubuntu@3.37.249.79:22" type="ssh/sftp" uuid="8efbf01f-4f4e-49e1-8c87-f2071d777490">
+        <config>
+          <option name="projectRootOnTarget" value="/home/ubuntu/chatting230427" />
+          <option name="serverName" value="ubuntu@3.37.249.79:22 key" />
+          <option name="useRsync" value="true" />
+        </config>
+        <ContributedStateBase type="JavaLanguageRuntime">
+          <config />
+        </ContributedStateBase>
+      </target>
+    </targets>
+  </component>
+</project>
