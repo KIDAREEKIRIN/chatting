@@ -12,7 +12,7 @@ public class JDBCExample {
         Statement statement = null;
         ResultSet resultSet = null;
 //        jdbc:mysql://localhost:3306
-        String url = "jdbc:mysql://localhost:3306/test5"; // test5는 데이터베이스 이름
+        String url = "jdbc:mysql://3.37.249.79:22/test5"; // test5는 데이터베이스 이름
         String user = "test";
         String password = "test";
 
@@ -21,11 +21,11 @@ public class JDBCExample {
             connection = DriverManager.getConnection(url, user, password);
 
             statement = connection.createStatement();
-            resultSet = statement.executeQuery("SELECT * FROM default_duty_name");
+            resultSet = statement.executeQuery("SELECT * FROM user_info");
 
             while(resultSet.next()) {
-                int id = resultSet.getInt("duty_id");
-                String name = resultSet.getString("duty_name");
+                int id = resultSet.getInt("number");
+                String name = resultSet.getString("id");
 //                int age = resultSet.getInt("age");
                 System.out.println(id + ", " + name);
             }
