@@ -25,7 +25,8 @@ public class SQLtest {
             con = DriverManager.getConnection("jdbc:mysql://" + server + "/" + "?useSSL=false", user_name, password);
             System.out.println("연결 완료!");
         } catch(SQLException e) {
-            System.err.println("연결 오류" + e.getMessage());
+            System.err.println("연결 오류" + e.getMessage());// 오류가 무엇인지 출력
+            System.err.println("오류 코드: " + e.getErrorCode()); // 오류 코드를 출력
             e.printStackTrace();
         }
 
