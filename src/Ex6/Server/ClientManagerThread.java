@@ -9,8 +9,8 @@ import java.util.Scanner;
 
 public class ClientManagerThread extends Thread{
 
-    private Socket clientSocket; // 클라이언트와 통신하기 위한 Socket
-    private MyServer server; // 서버의 정보를 저장하기 위한 변수
+    private final Socket clientSocket; // 클라이언트와 통신하기 위한 Socket
+    private final MyServer server; // 서버의 정보를 저장하기 위한 변수
     private PrintWriter out; // 클라이언트에게 데이터를 전송하기 위한 PrintWriter
     private BufferedReader in; // 클라이언트로부터 데이터를 받기 위한 BufferedReader
     private String clientName = ""; // 클라이언트의 이름
@@ -33,12 +33,12 @@ public class ClientManagerThread extends Thread{
             out = new PrintWriter(clientSocket.getOutputStream(), true); // 클라이언트로 데이터를 전송하기 위한 PrintWriter
 
             // 클라이언트의 이름이 비어있거나, 이미 존재하는 이름인 경우
-            while(clientName.length() == 0 || server.clients.containsKey(clientName)){
-                out.println("Enter your name:"); // 클라이언트에게 이름을 입력하라는 메시지 전송
-                clientName = in.readLine().trim(); // 클라이언트로부터 이름을 받아옴
+            while(clientName.length() == 0 || server.clients.containsKey(clientName)){ // 클라이언트의 이름이 비어있거나, 이미 존재하는 이름인 경우
+                out.println("Enter your name:"); // 클라이언트에게 이름을 입력하라는 메시지 전송 (println() 메소드를 사용하여 개행)
+                clientName = in.readLine().trim(); // 클라이언트로부터 이름을 받아옴 (trim() 메소드를 사용하여 공백 제거)
             }
-            server.addClient(clientName, out); // 서버에 클라이언트의 이름과 PrintWriter를 저장
-            out.println("Name accepted: " + clientName); // 클라이언트에게 이름이 저장되었음을 알림
+            server.addClient(clientName, out); // 서버에 클라이언트의 이름과 PrintWriter를 저장 (추가)
+            out.println("Name accepted: " + clientName); // 클라이언트에게 이름이 저장되었음을 알림 (println() 메소드를 사용하여 개행)
 
             // 채팅방 선택
             while(true){ // 채팅방을 선택할 때까지 반복
@@ -57,7 +57,9 @@ public class ClientManagerThread extends Thread{
             // 클라이언트로부터 메시지 받아서 브로드캐스트
             String message; // 클라이언트로부터 받은 메시지를 저장할 변수
             while((message = in.readLine()) != null){ // 클라이언트로부터 메시지를 받아옴
-                chatRoom.broadcast(clientName + ": " + message); // 채팅방에 메시지를 브로드캐스트
+                chatRoom.broadcast(clientName + ": " + message); // 채팅방에 메시지를 브로드캐스트 -> 전송.
+                // 서버에 메시지를 출력 // clientName : 보내는 닉네임. message : 보내는 메시지
+                System.out.println(clientName + ": " + message);
             }
 
         } catch(IOException e){ // 데이터를 주고받는 과정에서 오류가 발생한 경우

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,8 +47,9 @@ public class MyServer {
         clients.remove(clientName); // 클라이언트 목록에서 클라이언트 삭제
     }
 
+    // 클라이언트 목록에 있는 모든 클라이언트에게 메시지 전송 -> 전체 메시지 전송.
     public synchronized void broadcast(String message) {
-        for (PrintWriter out : clients.values()) { // 클라이언트 목록에 있는 모든 클라이언트에게 메시지 전송
+        for (PrintWriter out : clients.values()) {
             out.println(message); // 메시지 전송
         }
     }
@@ -66,7 +68,66 @@ public class MyServer {
         return room; // 채팅방 반환
     }
 
+    // clientName 클라이언트에게 메시지 전송
+    public void sendToClient(String clientName, String message) {
+        clients.get(clientName).println(message);
+    }
+
+    // roomName 채팅방에 있는 모든 클라이언트에게 메시지 전송
+    public void sendToRoom(String roomName, String message) {
+        ChatRoom room = getChatRoom(roomName);
+        room.broadcast(message);
+    }
+
     public static void main(String[] args) {
+
+        // JDBC 부분.
+        Connection connection = null; //    데이터베이스와 연결을 위한 객체.
+        Statement statement = null; //  sql문을 실행하기 위한 객체.
+        ResultSet resultSet = null;
+
+        try {
+            String url = "jdbc:mysql://3.37.249.79:3306/test5"; // test5는 데이터베이스 이름 //
+            String user = "test"; // user 이름.
+            String password = "test"; // 비밀번호.
+
+//            String sql = "SELECT * FROM default_duty_name"; // 실행할 sql문.
+
+            Class.forName("com.mysql.cj.jdbc.Driver"); // 드라이버 로딩
+            // 드라이버 버전 확인
+//            System.out.println("JDBC Driver Version: " + DriverManager.getDriver("jdbc:mysql://3.37.249.79:3306/test5").getMajorVersion() + "." + DriverManager.getDriver("jdbc:mysql://3.37.249.79:3306/test5").getMinorVersion());
+            System.out.println("url" + url);
+            System.out.println("user" + user);
+            System.out.println("password" + password);
+            connection = DriverManager.getConnection(url, user, password); //
+
+            statement = connection.createStatement(); //
+            resultSet = statement.executeQuery("SELECT * FROM default_duty_name");
+
+            while(resultSet.next()) { //
+//                int id = resultSet.getInt("duty_id");
+                String name = resultSet.getString("duty_name");
+//                int age = resultSet.getInt("age");
+                System.out.println(name);
+            }
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(resultSet != null)
+                    resultSet.close();
+                if(statement != null)
+                    statement.close();
+                if(connection != null)
+                    connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
         // 서버를 생성하고 시작
         MyServer server = new MyServer(8888);
 

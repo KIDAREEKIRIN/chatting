@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ChatRoom {
-    private String roomName; // 채팅방 이름
-    private HashMap<String, PrintWriter> clients; // 채팅방에 접속한 클라이언트 목록을 저장하는 HashMap
+    private final String roomName; // 채팅방 이름 저장
+    private final HashMap<String, PrintWriter> clients; // 채팅방에 접속한 클라이언트 목록을 저장하는 HashMap 객체
 
-    public ChatRoom(String roomName) { // 생성자
-        this.roomName = roomName; // 채팅방 이름 설정
-        clients = new HashMap<>(); // 클라이언트 목록을 저장하는 HashMap 생성
+    public ChatRoom(String roomName) { // 생성자 호출 시 채팅방 이름을 매개변수로 받음
+        this.roomName = roomName; // 채팅방 이름 설정 (생성자 호출 시 매개변수로 받은 채팅방 이름으로 설정)
+        clients = new HashMap<>(); // 클라이언트 목록을 저장하는 HashMap 생성 (생성자 호출 시 생성)
     }
 
     // 클라이언트 목록에 클라이언트 추가
