@@ -77,12 +77,13 @@ public class MyServer {
         room.broadcast(message);
     }
 
+
     // JDBC 연결테스트 -> Select 문.
-    public static void JDBC(){
+    public static void JDBCTest(){
         // JDBC 부분.
         Connection connection = null; //    데이터베이스와 연결을 위한 객체.
         Statement statement = null; //  sql문을 실행하기 위한 객체.
-        ResultSet resultSet = null;
+        ResultSet resultSet = null; // sql문을 실행한 결과를 담는 객체.
 
         try {
             String url = "jdbc:mysql://3.37.249.79:3306/test5"; // test5는 데이터베이스 이름 //
@@ -90,14 +91,13 @@ public class MyServer {
             String password = "test"; // 비밀번호.
 
             // 실행할 sql문.
-            String sql = "SELECT * FROM default_duty_name";
+            String sql = "SELECT * FROM duty_name";
 
             Class.forName("com.mysql.cj.jdbc.Driver"); // 드라이버 로딩
-            // 드라이버 버전 확인
-//            System.out.println("JDBC Driver Version: " + DriverManager.getDriver("jdbc:mysql://3.37.249.79:3306/test5").getMajorVersion() + "." + DriverManager.getDriver("jdbc:mysql://3.37.249.79:3306/test5").getMinorVersion());
-            System.out.println("url" + url);
-            System.out.println("user" + user);
-            System.out.println("password" + password);
+
+//            System.out.println("url" + url);
+//            System.out.println("user" + user);
+//            System.out.println("password" + password);
             connection = DriverManager.getConnection(url, user, password); //
 
             statement = connection.createStatement(); //
@@ -105,8 +105,10 @@ public class MyServer {
 
             while(resultSet.next()) {
                 // resultSet.next() : 다음 행으로 이동. 행이 존재하면 true, 없으면 false.
+                Integer id = resultSet.getInt("duty_id"); // duty_code라는 컬럼의 값을 가져옴.
                 String name = resultSet.getString("duty_name"); // duty_name이라는 컬럼의 값을 가져옴.
-                System.out.println(name); // 가져온 값을 출력.
+                String cate_name = resultSet.getString("cate_name"); // cate_name이라는 컬럼의 값을 가져옴.
+                System.out.println(id + name + cate_name); // 가져온 값을 출력.
             }
 
         } catch (ClassNotFoundException e) { // 드라이버 로딩 오류.
@@ -130,7 +132,7 @@ public class MyServer {
     // 메인 메소드
     public static void main(String[] args) {
         // JDBC 부분 라이브러리를 통한 데이터베이스 연동.
-        JDBC();
+        JDBCTest();
         // 서버를 생성하고 시작
         MyServer server = new MyServer(8888);
 

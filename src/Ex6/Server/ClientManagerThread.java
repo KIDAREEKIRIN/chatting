@@ -1,10 +1,13 @@
 package Ex6.Server;
 
+import com.mysql.cj.jdbc.ConnectionImpl;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.*;
 import java.util.Scanner;
 
 public class ClientManagerThread extends Thread{
@@ -22,6 +25,8 @@ public class ClientManagerThread extends Thread{
         this.clientSocket = clientSocket; // 클라이언트와 통신하기 위한 Socket
         this.server = server; // 서버의 정보를 저장하기 위한 변수
     }
+
+
 
     // @Override 사용해도 되고, 안해도 됨. -> 사용하는 것이 조금 더 안정적.
     @Override
@@ -56,6 +61,42 @@ public class ClientManagerThread extends Thread{
                     System.out.println(chatRoom.clients.keySet()); // 채팅방에 있는 클라이언트들의 이름 출력
                     out.println(clientName + "님, " + roomName + "에 입장하셨습니다.");
 //                    out.println(managerName + "님, " + roomName + "에 입장하셨습니다.");
+
+                    // 채팅방 JDBC에 저장 -> DB 연동.
+                    try {
+                        String url = "jdbc:mysql://3.37.249.79:3306/test5";
+                        String user = "test";
+                        String password = "test";
+
+                        String sql = "INSERT INTO chat_room (room_name, from_nick, to_nick, last_sendMsg, last_sender_id, last_sender_msg_id) VALUES (?, ?, ?, ?, ?, ?)";
+
+                        Class.forName("com.mysql.cj.jdbc.Driver"); // 드라이버 로딩
+
+                        Connection connection = DriverManager.getConnection(url, user, password); // DB 연결
+
+                        PreparedStatement statement = connection.prepareStatement(sql); // SQL문 준비
+                        statement.setString(1, roomName); // roomName -> 방 이름.
+                        statement.setString(2, clientName); // clientName -> 채팅방을 만든 아이디.
+                        statement.setString(3, managerName); // managerName -> 채팅방 관리자의 이름
+                        statement.setString(4, "000"); // "" -> 마지막으로 보낸 메시지
+                        statement.setInt(5, 1); // "" -> 마지막으로 보낸 메시지를 보낸 사람의 아이디
+                        statement.setInt(6, 2); // "" -> 마지막으로 보낸 메시지의 아이디
+
+                        int rowsInserted = statement.executeUpdate(); // SQL문 실행
+                        if (rowsInserted > 0) { // SQL문 실행 결과가 0보다 큰 경우
+                            System.out.println("A new employee was inserted successfully!"); // 성공 메시지 출력
+                        } else { // SQL문 실행 결과가 0인 경우
+                            System.out.println("A new employee was inserted failed!"); // 실패 메시지 출력
+                        }
+
+                    } catch (ClassNotFoundException e) { // 드라이버 로딩 실패 시
+                        System.out.println("드라이버 로딩 실패");
+//                    e.printStackTrace();
+                    } catch (SQLException e) {
+                        System.out.println("에러: " + e);
+                    } catch (Exception e) {
+                        System.out.println("알 수 없는 에러: " + e);
+                    }
                     // roomName -> 방 이름.
                     break; // 채팅방 선택 반복문 종료
                 } else { // 채팅방이 존재하지 않는 경우
@@ -63,6 +104,10 @@ public class ClientManagerThread extends Thread{
                 }
 
             }
+
+
+
+
 
 
             // 클라이언트로부터 메시지 받아서 브로드캐스트
