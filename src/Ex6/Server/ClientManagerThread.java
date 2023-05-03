@@ -39,25 +39,37 @@ public class ClientManagerThread extends Thread{
             }
             server.addClient(clientName, out); // 서버에 클라이언트의 이름과 PrintWriter를 저장 (추가)
             out.println("Name accepted: " + clientName); // 클라이언트에게 이름이 저장되었음을 알림 (println() 메소드를 사용하여 개행)
+            System.out.println("Name accepted: " + clientName); // 서버 콘솔에 클라이언트의 이름이 저장되었음을 알림 (println() 메소드를 사용하여 개행)
+            // clientName -> 채팅방을 만든 아이디.
 
             // 채팅방 선택
             while(true){ // 채팅방을 선택할 때까지 반복
                 out.println("Enter room name:"); // 클라이언트에게 채팅방 이름을 입력하라는 메시지 전송
                 String roomName = in.readLine().trim(); // 클라이언트로부터 채팅방 이름을 받아옴
                 chatRoom = server.getChatRoom(roomName); // 서버에서 채팅방을 찾아옴
+                    chatRoom.addClient(managerName, out); // 채팅방에 관리자 asdf 추가
                 if(chatRoom != null){ // 채팅방이 존재하는 경우
                     chatRoom.addClient(clientName, out); // 채팅방에 클라이언트 추가
                     out.println("Room joined: " + roomName); // 클라이언트에게 채팅방에 참여했음을 알림
+                    // 서버에 채팅방 이름 출력. (채팅방이 존재하지 않는 경우에도 출력됨)
+                    System.out.println("Room joined: " + roomName);
+                    System.out.println(chatRoom.clients.keySet()); // 채팅방에 있는 클라이언트들의 이름 출력
+                    out.println(clientName + "님, " + roomName + "에 입장하셨습니다.");
+//                    out.println(managerName + "님, " + roomName + "에 입장하셨습니다.");
+                    // roomName -> 방 이름.
                     break; // 채팅방 선택 반복문 종료
                 } else { // 채팅방이 존재하지 않는 경우
                     out.println("Room does not exist."); // 클라이언트에게 채팅방이 존재하지 않음을 알림
                 }
+
             }
+
 
             // 클라이언트로부터 메시지 받아서 브로드캐스트
             String message; // 클라이언트로부터 받은 메시지를 저장할 변수
             while((message = in.readLine()) != null){ // 클라이언트로부터 메시지를 받아옴
-                chatRoom.broadcast(clientName + ": " + message); // 채팅방에 메시지를 브로드캐스트 -> 전송.
+//                chatRoom.broadcast(clientName + ": " + message); // 채팅방에 메시지를 브로드캐스트 -> 전송.
+                chatRoom.broadcastNotMe(clientName + ": " + message, clientName);
                 // 서버에 메시지를 출력 // clientName : 보내는 닉네임. message : 보내는 메시지
                 System.out.println(clientName + ": " + message);
             }

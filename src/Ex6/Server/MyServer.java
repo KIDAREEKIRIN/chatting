@@ -1,5 +1,4 @@
 package Ex6.Server;
-import Ex6.Server.ClientManagerThread;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,7 +7,6 @@ import java.net.Socket;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class MyServer {
 
@@ -29,7 +27,7 @@ public class MyServer {
 
                 // 새로운 클라이언트를 위한 쓰레드 생성
                 ClientManagerThread handler = new ClientManagerThread(clientSocket, this);
-                handler.start(); // 쓰레드 시작
+                handler.start(); // 쓰레드 시작기ㅈ
             }
         } catch (IOException e) { // 예외 처리
             System.out.println("Error starting server on port " + port); // 서버 시작 오류 메시지 출력
@@ -79,8 +77,8 @@ public class MyServer {
         room.broadcast(message);
     }
 
-    public static void main(String[] args) {
-
+    // JDBC 연결테스트 -> Select 문.
+    public static void JDBC(){
         // JDBC 부분.
         Connection connection = null; //    데이터베이스와 연결을 위한 객체.
         Statement statement = null; //  sql문을 실행하기 위한 객체.
@@ -91,7 +89,8 @@ public class MyServer {
             String user = "test"; // user 이름.
             String password = "test"; // 비밀번호.
 
-//            String sql = "SELECT * FROM default_duty_name"; // 실행할 sql문.
+            // 실행할 sql문.
+            String sql = "SELECT * FROM default_duty_name";
 
             Class.forName("com.mysql.cj.jdbc.Driver"); // 드라이버 로딩
             // 드라이버 버전 확인
@@ -102,16 +101,15 @@ public class MyServer {
             connection = DriverManager.getConnection(url, user, password); //
 
             statement = connection.createStatement(); //
-            resultSet = statement.executeQuery("SELECT * FROM default_duty_name");
+            resultSet = statement.executeQuery(sql);
 
-            while(resultSet.next()) { //
-//                int id = resultSet.getInt("duty_id");
-                String name = resultSet.getString("duty_name");
-//                int age = resultSet.getInt("age");
-                System.out.println(name);
+            while(resultSet.next()) {
+                // resultSet.next() : 다음 행으로 이동. 행이 존재하면 true, 없으면 false.
+                String name = resultSet.getString("duty_name"); // duty_name이라는 컬럼의 값을 가져옴.
+                System.out.println(name); // 가져온 값을 출력.
             }
 
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) { // 드라이버 로딩 오류.
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -127,7 +125,12 @@ public class MyServer {
                 e.printStackTrace();
             }
         }
+    }
 
+    // 메인 메소드
+    public static void main(String[] args) {
+        // JDBC 부분 라이브러리를 통한 데이터베이스 연동.
+        JDBC();
         // 서버를 생성하고 시작
         MyServer server = new MyServer(8888);
 
