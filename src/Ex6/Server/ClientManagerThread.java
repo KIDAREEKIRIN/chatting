@@ -64,10 +64,11 @@ public class ClientManagerThread extends Thread{
 
                     // 채팅방 JDBC에 저장 -> DB 연동.
                     try {
-                        String url = "jdbc:mysql://3.37.249.79:3306/test5";
-                        String user = "test";
+                        String url = "jdbc:mysql://3.37.249.79:3306/test5"; //
+                        String user = "test"; //
                         String password = "test";
 
+                        // SQL문 (채팅방 생성)
                         String sql = "INSERT INTO chat_room (room_name, from_nick, to_nick, last_sendMsg, last_sender_id, last_sender_msg_id) VALUES (?, ?, ?, ?, ?, ?)";
 
                         Class.forName("com.mysql.cj.jdbc.Driver"); // 드라이버 로딩
@@ -92,9 +93,9 @@ public class ClientManagerThread extends Thread{
                     } catch (ClassNotFoundException e) { // 드라이버 로딩 실패 시
                         System.out.println("드라이버 로딩 실패");
 //                    e.printStackTrace();
-                    } catch (SQLException e) {
-                        System.out.println("에러: " + e);
-                    } catch (Exception e) {
+                    } catch (SQLException e) { // SQL문 실행 실패 시
+                        System.out.println("SQL문 에러: " + e);
+                    } catch (Exception e) { // 그 외의 에러 발생 시
                         System.out.println("알 수 없는 에러: " + e);
                     }
                     // roomName -> 방 이름.

@@ -27,7 +27,7 @@ public class MyServer {
 
                 // 새로운 클라이언트를 위한 쓰레드 생성
                 ClientManagerThread handler = new ClientManagerThread(clientSocket, this);
-                handler.start(); // 쓰레드 시작기ㅈ
+                handler.start(); // 쓰레드 시작
             }
         } catch (IOException e) { // 예외 처리
             System.out.println("Error starting server on port " + port); // 서버 시작 오류 메시지 출력
