@@ -106,13 +106,8 @@ public class ClientManagerThread extends Thread{
 
             }
 
-
-
-
-
-
-            // 클라이언트로부터 메시지 받아서 브로드캐스트
-            String message; // 클라이언트로부터 받은 메시지를 저장할 변수
+            // 클라이언트로부터 메시지 받아서 브로드캐스트 -> 채팅방 메시지 입력단계.
+           String message; // 클라이언트로부터 받은 메시지를 저장할 변수
             while((message = in.readLine()) != null){ // 클라이언트로부터 메시지를 받아옴
 //                chatRoom.broadcast(clientName + ": " + message); // 채팅방에 메시지를 브로드캐스트 -> 전송.
                 chatRoom.broadcastNotMe(clientName + ": " + message, clientName);
