@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 public class MyServer {
 
-    private ArrayList<ChatRoom> chatRooms; // 채팅방 목록을 저장하는 ArrayList
+    private final ArrayList<ChatRoom> chatRooms; // 채팅방 목록을 저장하는 ArrayList
     public HashMap<String, PrintWriter> clients; // 클라이언트 목록을 저장하는 HashMap
     private ServerSocket serverSocket; // 서버 소켓
     // 여기서부터 다시 생각하기.
@@ -46,7 +46,7 @@ public class MyServer {
         clients.remove(clientName); // 클라이언트 목록에서 클라이언트 삭제
     }
 
-    // 클라이언트 목록에 있는 모든 클라이언트에게 메시지 전송 -> 전체 메시지 전송.
+    // 클라이언트 목록에 있는 모든 클라이언트에게 메시지 전송 -> 전체 메시지 전송. -> 추후에 사용.
     public synchronized void broadcast(String message) {
         for (PrintWriter out : clients.values()) {
             out.println(message); // 메시지 전송
