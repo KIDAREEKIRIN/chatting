@@ -13,6 +13,7 @@ public class MyServer {
     private ArrayList<ChatRoom> chatRooms; // 채팅방 목록을 저장하는 ArrayList
     public HashMap<String, PrintWriter> clients; // 클라이언트 목록을 저장하는 HashMap
     private ServerSocket serverSocket; // 서버 소켓
+    // 여기서부터 다시 생각하기.
 
     // 생성자
     public MyServer(int port) { // 포트 번호를 매개변수로 받음
