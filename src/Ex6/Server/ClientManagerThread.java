@@ -1,7 +1,6 @@
 package Ex6.Server;
 
 import com.mysql.cj.jdbc.ConnectionImpl;
-import com.mysql.cj.xdevapi.JsonArray;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,8 +9,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.*;
 import java.util.Scanner;
-//import org.json.JSONObject;
-
 
 public class ClientManagerThread extends Thread{
 
@@ -36,23 +33,9 @@ public class ClientManagerThread extends Thread{
     public void run(){ // Thread의 run() 메소드를 오버라이딩
         super.run(); // Thread의 run() 메소드를 호출
 
-
-
         try { // 데이터를 주고받는 과정에서 오류가 발생할 수 있으므로 try-catch문 사용
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); // 클라이언트로부터 데이터를 받기 위한 InputStream
             out = new PrintWriter(clientSocket.getOutputStream(), true); // 클라이언트로 데이터를 전송하기 위한 PrintWriter
-
-            String url = "jdbc:mysql://3.37.249.79:3306/test5"; //
-            String user = "test"; //
-            String password = "test";
-
-            // SQL문 (채팅방 생성)
-//            String sql = "INSERT INTO chat_room (room_name, from_nick, to_nick, last_sendMsg, last_sender_id, last_sender_msg_id) VALUES (?, ?, ?, ?, ?, ?)";
-
-            Class.forName("com.mysql.cj.jdbc.Driver"); // 드라이버 로딩
-            Connection connection = DriverManager.getConnection(url, user, password); // DB 연결
-
-
 
             // 클라이언트의 이름이 비어있거나, 이미 존재하는 이름인 경우
             while(clientName.length() == 0 || server.clients.containsKey(clientName)){ // 클라이언트의 이름이 비어있거나, 이미 존재하는 이름인 경우
@@ -81,16 +64,16 @@ public class ClientManagerThread extends Thread{
 
                     // 채팅방 JDBC에 저장 -> DB 연동.
                     try {
-//                        String url = "jdbc:mysql://3.37.249.79:3306/test5"; //
-//                        String user = "test"; //
-//                        String password = "test";
+                        String url = "jdbc:mysql://3.37.249.79:3306/test5"; //
+                        String user = "test"; //
+                        String password = "test";
 
                         // SQL문 (채팅방 생성)
                         String sql = "INSERT INTO chat_room (room_name, from_nick, to_nick, last_sendMsg, last_sender_id, last_sender_msg_id) VALUES (?, ?, ?, ?, ?, ?)";
 
                         Class.forName("com.mysql.cj.jdbc.Driver"); // 드라이버 로딩
 
-//                        Connection connection = DriverManager.getConnection(url, user, password); // DB 연결
+                        Connection connection = DriverManager.getConnection(url, user, password); // DB 연결
 
                         PreparedStatement statement = connection.prepareStatement(sql); // SQL문 준비
                         statement.setString(1, roomName); // roomName -> 방 이름.
@@ -123,31 +106,13 @@ public class ClientManagerThread extends Thread{
 
             }
 
+
+
+
+
+
             // 클라이언트로부터 메시지 받아서 브로드캐스트
             String message; // 클라이언트로부터 받은 메시지를 저장할 변수
-//
-//            if((message=in.readLine()).equals("GET_CHATROOM_LIST")) {
-//                Statement statement = connection.createStatement();
-//                ResultSet resultSet = statement.executeQuery("SELECT * FROM chat_room");
-//
-//                JsonArray jsonArray = new JsonArray();
-//                while (resultSet.next()) {
-//                    int room_id = resultSet.getInt("room_id");
-//                    String from_nick = resultSet.getString("from_nick");
-//                    String to_nick = resultSet.getString("to_nick");
-//                    String last_sendMsg = resultSet.getString("last_sendMsg");
-//                    System.out.println(room_id+from_nick+to_nick+last_sendMsg); // 가져온 값을 출력.
-//                    // 가져온 값을 클라이언트에 보내기
-////                    JSONObject jsonObject = new JSONObject();
-////                    jsonArray.add(room_id);
-//                    out.println(room_id+from_nick+to_nick+last_sendMsg);
-//
-//                }
-//
-//                resultSet.close();
-//                statement.close();
-//            }
-
             while((message = in.readLine()) != null){ // 클라이언트로부터 메시지를 받아옴
 //                chatRoom.broadcast(clientName + ": " + message); // 채팅방에 메시지를 브로드캐스트 -> 전송.
                 chatRoom.broadcastNotMe(clientName + ": " + message, clientName);
@@ -155,13 +120,8 @@ public class ClientManagerThread extends Thread{
                 System.out.println(clientName + ": " + message);
             }
 
-
-
-
         } catch(IOException e){ // 데이터를 주고받는 과정에서 오류가 발생한 경우
             System.out.println("Error handling client " + e.getMessage()); // 오류 메시지 출력
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
         } finally { // 클라이언트와 통신이 종료되었을 때 실행되는 코드 (try-catch문을 빠져나가기 전에 실행됨)
             try{
                 clientSocket.close(); // 클라이언트와 통신을 위한 Socket을 닫음
