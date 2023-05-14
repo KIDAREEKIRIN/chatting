@@ -26,7 +26,7 @@ public class MyServer {
                 Socket clientSocket = serverSocket.accept(); // 클라이언트 접속 대기
                 System.out.println("New client connected: " + clientSocket); // 클라이언트 접속 메시지 출력
 
-                // 새로운 클라이언트를 위한 쓰레드 생성
+                // 새로운 클라이언트를 위한 쓰레드 생성 -> 새로운 클라이언트가 접속할 때마다,
                 ClientManagerThread handler = new ClientManagerThread(clientSocket, this);
                 handler.start(); // 쓰레드 시작
             }
@@ -92,7 +92,9 @@ public class MyServer {
             String password = "test"; // 비밀번호.
 
             // 실행할 sql문.
-            String sql = "SELECT * FROM duty_name";
+//            String sql = "SELECT * FROM duty_name";
+            // 채팅방의 정보를 SELECT 한다.
+            String sql = "SELECT * FROM chat_room";
 
             Class.forName("com.mysql.cj.jdbc.Driver"); // 드라이버 로딩
 
@@ -106,10 +108,17 @@ public class MyServer {
 
             while(resultSet.next()) {
                 // resultSet.next() : 다음 행으로 이동. 행이 존재하면 true, 없으면 false.
-                Integer id = resultSet.getInt("duty_id"); // duty_code라는 컬럼의 값을 가져옴.
-                String name = resultSet.getString("duty_name"); // duty_name이라는 컬럼의 값을 가져옴.
-                String cate_name = resultSet.getString("cate_name"); // cate_name이라는 컬럼의 값을 가져옴.
-                System.out.println(id + name + cate_name); // 가져온 값을 출력.
+//                Integer id = resultSet.getInt("duty_id"); // duty_code라는 컬럼의 값을 가져옴.
+//                String name = resultSet.getString("duty_name"); // duty_name이라는 컬럼의 값을 가져옴.
+//                String cate_name = resultSet.getString("cate_name"); // cate_name이라는 컬럼의 값을 가져옴.
+                Integer room_id = resultSet.getInt("room_id"); // room_id라는 컬럼의 값을 가져옴.
+                String room_name = resultSet.getString("room_name"); // room_name이라는 컬럼의 값을 가져옴.
+                String from_nick = resultSet.getString("from_nick"); // from_nick이라는 컬럼의 값을 가져옴.
+                String to_nick = resultSet.getString("to_nick"); // to_nick이라는 컬럼의 값을 가져옴.
+                String last_sendMsg = resultSet.getString("last_sendMsg"); // last_sendMsg이라는 컬럼의 값을 가져옴.
+//                String last_sendTime = resultSet.getString("last_sendTime"); // last_sendTime이라는 컬럼의 값을 가져옴.
+                System.out.println(room_id + room_name + from_nick + to_nick + last_sendMsg);
+//                System.out.println(id + name + cate_name); // 가져온 값을 출력.
             }
 
         } catch (ClassNotFoundException e) { // 드라이버 로딩 오류.
