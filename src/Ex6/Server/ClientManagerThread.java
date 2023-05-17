@@ -43,9 +43,12 @@ public class ClientManagerThread extends Thread {
                 out.println("Enter your name:"); // 클라이언트에게 이름을 입력하라는 메시지 전송 (println() 메소드를 사용하여 개행)
                 clientName = in.readLine().trim(); // 클라이언트로부터 이름을 받아옴 (trim() 메소드를 사용하여 공백 제거)
             }
-            server.addClient(clientName, out); // 서버에 클라이언트의 이름과 PrintWriter를 저장 (추가)
-            out.println("Name accepted: " + clientName); // 클라이언트에게 이름이 저장되었음을 알림 (println() 메소드를 사용하여 개행)
-            System.out.println("Name accepted: " + clientName); // 서버 콘솔에 클라이언트의 이름이 저장되었음을 알림 (println() 메소드를 사용하여 개행)
+            // 서버에 클라이언트의 이름과 PrintWriter를 저장 (추가)
+            server.addClient(clientName, out);
+            // 클라이언트에게 이름이 저장되었음을 알림 (println() 메소드를 사용하여 개행)
+            out.println("Name accepted: " + clientName);
+            // 서버 콘솔에 클라이언트의 이름이 저장되었음을 알림 (println() 메소드를 사용하여 개행)
+            System.out.println("Name accepted: " + clientName);
             // clientName -> 채팅방을 만든 아이디.
 
             // 채팅방 선택
@@ -76,6 +79,9 @@ public class ClientManagerThread extends Thread {
                     // 클라이언트에게 채팅방에 입장했음을 알림
                     out.println(clientName + "님, " + roomName + "에 입장하셨습니다.");
 
+                    // 채팅방의 메시지 읽기 -> 출력.
+                    readMsg(roomName);
+
                     break; // 채팅방 선택 반복문 종료
 
                 } else { // 채팅방이 존재하지 않는 경우
@@ -92,8 +98,15 @@ public class ClientManagerThread extends Thread {
             try {
                 while ((message = in.readLine()) != null) { // 클라이언트로부터 메시지를 받아옴
                     // DB 추가하기
-                    // 채팅방에 메시지를 브로드캐스트 -> 전송.
+                    // 채팅방에 메시지를 브로드캐스트 -> 클라이언트에게 전송.
                     chatRoom.broadcast(clientName + ": " + message);
+                    // 서버에서 클라이언트로부터 받는 메시지 출력.
+                    System.out.println(clientName + ": " + message);
+                    // DB에 메시지 저장하기. Create.
+                    insertMsg(chatRoom.getRoomName(), message, clientName);
+                    // 채팅방 이름 출력하기.
+//                    System.out.println(chatRoom.getRoomName());
+//                    insertMsg(chatRoom.getRoomName(), message, clientName);
                     // 클라이언트에게 메시지를 전송
 //                    out.println(clientName + ": " + message);
                 }
@@ -123,6 +136,7 @@ public class ClientManagerThread extends Thread {
         }
     }
 
+    // 채팅방 목록 조회.
     public void selectRoom(String clientName) {
         // 채팅방 목록 조회
         try {
@@ -149,7 +163,7 @@ public class ClientManagerThread extends Thread {
                 String room_Date = resultSet.getString("room_Date");
 
                 System.out.println(roomName + " " + from_nick + " " + to_nick + " " + last_sendMsg + " " + readCount + " " + room_Date);
-                out.println(roomName + " " + from_nick + " " + to_nick + " " + last_sendMsg + " " + readCount + " " + room_Date);
+//                out.println(roomName + " " + from_nick + " " + to_nick + " " + last_sendMsg + " " + readCount + " " + room_Date);
             }
 
         } catch (Exception e) {
@@ -198,25 +212,85 @@ public class ClientManagerThread extends Thread {
         }
     }
 
-    public void insertMsg(String roomName, String message) {
+    // 채팅메시지 DB에 저장
+    public void insertMsg(String room_name, String message, String clientName) {
         // 채팅방 JDBC에 저장 -> DB 연동.
-//        try {
-//            String url = "jdbc:mysql://3.37.249.79:3306/test5"; //
-//            String user = "test"; //
-//            String password = "test";
+        try {
+            String url = "jdbc:mysql://3.37.249.79:3306/test5"; //
+            String user = "test"; //
+            String password = "test";
+
+            // SQL문 (메시지 생성)
+            String insertMsgSql = "INSERT INTO chat_msg (room_name, content, sender_nick, msg_time, msg_read) VALUES (?, ?, ?, ?, ?)";
+            // 드라이버 로딩
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            // DB 연결
+            connection = DriverManager.getConnection(url, user, password);
+            // SQL문 준비
+            PreparedStatement statement = connection.prepareStatement(insertMsgSql);
+            // roomName -> 방 이름.
+            statement.setString(1, room_name);
+            statement.setString(2, message);
+            statement.setString(3, clientName);
+            statement.setString(4, LocalDateTime.now().toString());
+            // "" -> 메시지 읽음 처리 여부 -> 둘 다 있으면 : 0 / 관리자가 있으면 : 1 / 유저가 있으면 : 2
+            statement.setString(5, "0");
+
+            int rowsInserted = statement.executeUpdate(); // SQL문 실행
+            if (rowsInserted > 0) { // SQL문 실행 결과가 0보다 큰 경우
+                System.out.println("DB에 추가 성공!"); // 성공 메시지 출력
+            } else { // SQL문 실행 결과가 0인 경우
+                System.out.println("DB에 추가 실패!"); // 실패 메시지 출력
+            }
+
+
+        } catch (ClassNotFoundException | SQLException e) { // 드라이버 로딩 실패 시
+            System.out.println("드라이버 로딩 실패");
+            //
+            e.printStackTrace();
+        }
+    }
+
+    // 불러오고자 하는 채팅방의 채팅메시지 조회
+    public void readMsg(String room_name) {
+        // 채팅방 JDBC에 저장 -> DB 연동.
+        try {
+            String url = "jdbc:mysql://3.37.249.79:3306/test5"; //
+            String user = "test"; //
+            String password = "test";
+            // SQL문 (메시지 조회)
+            String readMsgSql = "SELECT * FROM chat_msg WHERE room_name = '" + room_name + "' ORDER BY msg_time ASC";
+
+//            String sql = "SELECT * FROM chat_room WHERE from_nick = '" + clientName + "' OR to_nick = '" + clientName + "'";
+
+            // 드라이버 로딩
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            // DB 연결
+            connection = DriverManager.getConnection(url, user, password);
+            // SQL문 준비
+            Statement statement = connection.createStatement(); //
+            // SQL문 실행
+            ResultSet resultSet = statement.executeQuery(readMsgSql);
+
+            while (resultSet.next()) {
+                String content = resultSet.getString("content");
+                String sender_nick = resultSet.getString("sender_nick");
+//                String msg_time = resultSet.getString("msg_time");
+                // 서버 콘솔창에 출력하기.
+                System.out.println(sender_nick + " : " + content);
+                // 클라이언트에 보내기 -> Json 파싱 해야할 듯.
+                out.println(sender_nick + " : " + content);
+            }
 //
-//            // SQL문 (메시지 생성)
-//            String insertMsgSql = "INSERT INTO chat_msg (room_id, content, sender_nick, msg_time, msg_read ) VALUES (?, ?, ?, ?, ?, ?, ?)";
-//
-//            Class.forName("com.mysql.cj.jdbc.Driver"); // 드라이버 로딩
-//
-//            connection = DriverManager.getConnection(url, user, password); // DB 연결
-//
-//            PreparedStatement statement = connection.prepareStatement(insertMsgSql); // SQL문 준비
-//
-//            statement.setString(1, roomName); // roomName -> 방 이름.
-//
-//        } catch (ClassNotFoundException | SQLException e) { // 드라이버 로딩 실패 시
-//            System.out.println("드라이버 로딩 실패");
+//            int rowsInserted = statement.executeUpdate(readMsgSql); // SQL문 실행
+//            if (rowsInserted > 0) { // SQL문 실행 결과가 0보다 큰 경우
+//                System.out.println("채팅메시지 조회 성공!"); // 성공 메시지 출력
+//            } else { // SQL문 실행 결과가 0인 경우
+//                System.out.println("채팅메시지 조회 실패!"); // 실패 메시지 출력
+//            }
+
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
