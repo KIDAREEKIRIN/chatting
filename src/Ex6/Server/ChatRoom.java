@@ -39,9 +39,9 @@ public class ChatRoom {
 
     // 클라이언트 목록에 있는 모든 클라이언트에게 메시지 전송(나만 제외)
     public synchronized void broadcastNotMe(String message, String sender) {
-        for (Map.Entry<String, PrintWriter> entry : clients.entrySet()) {
-            if (!entry.getKey().equals(sender)) {
-                entry.getValue().println(message);
+        for (Map.Entry<String, PrintWriter> entry : clients.entrySet()) { // 클라이언트 목록에 있는 모든 클라이언트에게 메시지 전송
+            if (!entry.getKey().equals(sender)) { // 나를 제외한 나머지 클라이언트에게 메시지 전송
+                entry.getValue().println(message); // 메시지 전송
             }
         }
     }
