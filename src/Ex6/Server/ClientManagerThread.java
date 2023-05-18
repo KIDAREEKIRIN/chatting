@@ -66,27 +66,36 @@ public class ClientManagerThread extends Thread {
 
                 // 채팅방이 존재하는 경우
                 if (chatRoom != null) {
-
                     // 채팅방에 클라이언트 추가
                     chatRoom.addClient(clientName, out);
-
                     // 서버에 채팅방 이름 출력. (채팅방이 존재하지 않는 경우에도 출력됨)
                     System.out.println("Room joined: " + roomName);
-
                     // 채팅방에 있는 클라이언트들의 이름 모두 출력 -> [] 형태로 출력됨.
                     System.out.println(chatRoom.clients.keySet());
-
                     // 클라이언트에게 채팅방에 입장했음을 알림
                     out.println(clientName + "님, " + roomName + "에 입장하셨습니다.");
-
-                    // 채팅방의 메시지 읽기 -> 출력.
-                    readMsg(roomName);
-
-                    break; // 채팅방 선택 반복문 종료
+                    // 방이름이 존재하면 채팅방 만들면 안됨 -> 서버에서 불러오기.
+                    if(chatRoom.getRoomName() == roomName){
+                        System.out.println("이미 존재하는 방입니다.");
+                        System.out.println(chatRoom.getRoomName()); // 방이름 출력
+                        break;
+                    } else {
+                        // 채팅방 생성
+                        createRoom(roomName, clientName, managerName);
+                        // 채팅방의 메시지 읽기 -> 출력.
+                        readMsg(roomName);
+                        // 채팅방 선택 반복문 종료
+//                        break;
+                    }
+//                    // 채팅방 생성
+//                    createRoom(roomName, clientName, managerName);
+//                    // 채팅방의 메시지 읽기 -> 출력.
+//                    readMsg(roomName);
+//                    // 채팅방 선택 반복문 종료
+                    break;
 
                 } else { // 채팅방이 존재하지 않는 경우
                     out.println("채팅방이 없어요.."); // 클라이언트에게 채팅방이 존재하지 않음을 알림
-                    createRoom(roomName, clientName, managerName); // 채팅방을 생성
                 }
 
             }
@@ -180,7 +189,7 @@ public class ClientManagerThread extends Thread {
             String password = "test";
 
             // SQL문 (채팅방 생성)
-            String sql = "INSERT INTO chat_room (room_name, from_nick, to_nick, last_sendMsg, readCount, room_Date ) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO chat_room (room_name, from_nick, to_nick, last_sendMsg, readCount, room_Date ) VALUES (?, ?, ?, ?, ?, ?)";
 
             Class.forName("com.mysql.cj.jdbc.Driver"); // 드라이버 로딩
 
@@ -242,9 +251,9 @@ public class ClientManagerThread extends Thread {
 
             int rowsInserted = statement.executeUpdate(); // SQL문 실행
             if (rowsInserted > 0) { // SQL문 실행 결과가 0보다 큰 경우
-                System.out.println("DB에 추가 성공!"); // 성공 메시지 출력
+                System.out.println("DB에 채팅방 추가 성공!"); // 성공 메시지 출력
             } else { // SQL문 실행 결과가 0인 경우
-                System.out.println("DB에 추가 실패!"); // 실패 메시지 출력
+                System.out.println("DB에 채팅방 추가 실패!"); // 실패 메시지 출력
             }
 
         } catch (ClassNotFoundException | SQLException e) { // 드라이버 로딩 실패 시
