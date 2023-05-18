@@ -191,7 +191,8 @@ public class ClientManagerThread extends Thread {
             statement.setString(2, clientName); // clientName -> 채팅방을 만든 아이디.
             statement.setString(3, managerName); // managerName -> 채팅방 관리자의 이름
             statement.setString(4, "000"); // "" -> 마지막으로 보낸 메시지
-            statement.setInt(5, 2); // "" -> 메시지 읽음 처리 여부
+            // "" -> 메시지 읽음 처리 여부
+            statement.setInt(5, 2);
             LocalDateTime currentTime = LocalDateTime.now(); // 자바 현재시각 구하는 코드.
             statement.setString(6, currentTime.toString()); // "" -> 채팅방 생성 시각.
 
@@ -230,8 +231,11 @@ public class ClientManagerThread extends Thread {
             PreparedStatement statement = connection.prepareStatement(insertMsgSql);
             // roomName -> 방 이름.
             statement.setString(1, room_name);
+            // message -> 메시지 내용
             statement.setString(2, message);
+            // clientName -> 메시지 보낸 사람
             statement.setString(3, clientName);
+            // "" -> 메시지 보낸 시각
             statement.setString(4, LocalDateTime.now().toString());
             // "" -> 메시지 읽음 처리 여부 -> 둘 다 있으면 : 0 / 관리자가 있으면 : 1 / 유저가 있으면 : 2
             statement.setString(5, "0");
@@ -243,10 +247,8 @@ public class ClientManagerThread extends Thread {
                 System.out.println("DB에 추가 실패!"); // 실패 메시지 출력
             }
 
-
         } catch (ClassNotFoundException | SQLException e) { // 드라이버 로딩 실패 시
             System.out.println("드라이버 로딩 실패");
-            //
             e.printStackTrace();
         }
     }
@@ -260,9 +262,6 @@ public class ClientManagerThread extends Thread {
             String password = "test";
             // SQL문 (메시지 조회)
             String readMsgSql = "SELECT * FROM chat_msg WHERE room_name = '" + room_name + "' ORDER BY msg_time ASC";
-
-//            String sql = "SELECT * FROM chat_room WHERE from_nick = '" + clientName + "' OR to_nick = '" + clientName + "'";
-
             // 드라이버 로딩
             Class.forName("com.mysql.cj.jdbc.Driver");
             // DB 연결
@@ -273,21 +272,17 @@ public class ClientManagerThread extends Thread {
             ResultSet resultSet = statement.executeQuery(readMsgSql);
 
             while (resultSet.next()) {
+                // 메시지 내용.
                 String content = resultSet.getString("content");
+                // 메시지 보낸 사람.
                 String sender_nick = resultSet.getString("sender_nick");
+                // 메시지 보낸 시각.
 //                String msg_time = resultSet.getString("msg_time");
                 // 서버 콘솔창에 출력하기.
                 System.out.println(sender_nick + " : " + content);
                 // 클라이언트에 보내기 -> Json 파싱 해야할 듯.
                 out.println(sender_nick + " : " + content);
             }
-//
-//            int rowsInserted = statement.executeUpdate(readMsgSql); // SQL문 실행
-//            if (rowsInserted > 0) { // SQL문 실행 결과가 0보다 큰 경우
-//                System.out.println("채팅메시지 조회 성공!"); // 성공 메시지 출력
-//            } else { // SQL문 실행 결과가 0인 경우
-//                System.out.println("채팅메시지 조회 실패!"); // 실패 메시지 출력
-//            }
 
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
