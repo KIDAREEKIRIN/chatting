@@ -33,15 +33,19 @@ public class ClientManagerThread extends Thread {
     @Override
     public void run() { // Thread의 run() 메소드를 오버라이딩
         super.run(); // Thread의 run() 메소드를 호출
-
-        try { // 데이터를 주고받는 과정에서 오류가 발생할 수 있으므로 try-catch문 사용
-            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); // 클라이언트로부터 데이터를 받기 위한 InputStream
-            out = new PrintWriter(clientSocket.getOutputStream(), true); // 클라이언트로 데이터를 전송하기 위한 PrintWriter
+        // 데이터를 주고받는 과정에서 오류가 발생할 수 있으므로 try-catch문 사용
+        try {
+            // 클라이언트로부터 데이터를 받기 위한 InputStream
+            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            // 클라이언트로 데이터를 전송하기 위한 PrintWriter
+            out = new PrintWriter(clientSocket.getOutputStream(), true);
 
             // 클라이언트의 이름이 비어있거나, 이미 존재하는 이름인 경우
             while (clientName.length() == 0 || server.clients.containsKey(clientName)) { // 클라이언트의 이름이 비어있거나, 이미 존재하는 이름인 경우
-                out.println("Enter your name:"); // 클라이언트에게 이름을 입력하라는 메시지 전송 (println() 메소드를 사용하여 개행)
-                clientName = in.readLine().trim(); // 클라이언트로부터 이름을 받아옴 (trim() 메소드를 사용하여 공백 제거)
+                // 클라이언트에게 이름을 입력하라는 메시지 전송 (println() 메소드를 사용하여 개행)
+                out.println("Enter your name:");
+                // 클라이언트로부터 이름을 받아옴 (trim() 메소드를 사용하여 공백 제거)
+                clientName = in.readLine().trim();
             }
             // 서버에 클라이언트의 이름과 PrintWriter를 저장 (추가)
             server.addClient(clientName, out);
@@ -57,10 +61,8 @@ public class ClientManagerThread extends Thread {
                 selectRoom(clientName);
                 // 클라이언트에게 채팅방 이름을 입력하라는 메시지 전송
                 out.println("Enter room name:");
-
                 // 클라이언트로부터 채팅방 이름을 받아옴
                 String roomName = in.readLine().trim();
-
                 // 채팅방이 존재하는지 확인
                 chatRoom = server.getChatRoom(roomName);
 
