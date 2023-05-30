@@ -40,6 +40,9 @@ public class ClientManagerThread extends Thread {
             // 클라이언트로 데이터를 전송하기 위한 PrintWriter
             out = new PrintWriter(clientSocket.getOutputStream(), true);
 
+            // 해당 채팅방의 이름으로 불러오는 JDBC 채팅방 목록 코드 생성은 어떨까?
+            selectRoom(clientName);
+
             // 클라이언트의 이름이 비어있거나, 이미 존재하는 이름인 경우
             while (clientName.length() == 0 || server.clients.containsKey(clientName)) { // 클라이언트의 이름이 비어있거나, 이미 존재하는 이름인 경우
                 // 클라이언트에게 이름을 입력하라는 메시지 전송 (println() 메소드를 사용하여 개행)
@@ -65,7 +68,8 @@ public class ClientManagerThread extends Thread {
                 String roomName = in.readLine().trim();
                 // 채팅방이 존재하는지 확인
                 chatRoom = server.getChatRoom(roomName);
-
+                // 채팅방의 메시지 읽기 -> 출력.
+                readMsg(roomName);
                 // 채팅방이 존재하는 경우
                 if (chatRoom != null) {
                     // 채팅방에 클라이언트 추가
@@ -77,18 +81,15 @@ public class ClientManagerThread extends Thread {
                     // 클라이언트에게 채팅방에 입장했음을 알림
                     out.println(clientName + "님, " + roomName + "에 입장하셨습니다.");
                     // 방이름이 존재하면 채팅방 만들면 안됨 -> 서버에서 불러오기.
-                    if(chatRoom.getRoomName() == roomName){
-                        System.out.println("이미 존재하는 방입니다.");
-                        System.out.println(chatRoom.getRoomName()); // 방이름 출력
-                        break;
-                    } else {
-                        // 채팅방 생성
-                        createRoom(roomName, clientName, managerName);
-                        // 채팅방의 메시지 읽기 -> 출력.
-                        readMsg(roomName);
-                        // 채팅방 선택 반복문 종료
+//                    if(chatRoom.getRoomName() == roomName){
+//                        System.out.println("이미 존재하는 방입니다.");
+//                        System.out.println(chatRoom.getRoomName()); // 방이름 출력
 //                        break;
-                    }
+//                    } else {
+//
+//                        // 채팅방 선택 반복문 종료
+////                        break;
+//                    }
 //                    // 채팅방 생성
 //                    createRoom(roomName, clientName, managerName);
 //                    // 채팅방의 메시지 읽기 -> 출력.
@@ -98,6 +99,8 @@ public class ClientManagerThread extends Thread {
 
                 } else { // 채팅방이 존재하지 않는 경우
                     out.println("채팅방이 없어요.."); // 클라이언트에게 채팅방이 존재하지 않음을 알림
+                    // 채팅방 생성 -> 채팅방이 없으니 채팅방을 생성.
+                    createRoom(roomName, clientName, managerName);
                 }
 
             }
@@ -173,8 +176,10 @@ public class ClientManagerThread extends Thread {
                 String readCount = resultSet.getString("readCount");
                 String room_Date = resultSet.getString("room_Date");
 
+                // 서버에서 채팅방 목록을 출력
                 System.out.println(roomName + " " + from_nick + " " + to_nick + " " + last_sendMsg + " " + readCount + " " + room_Date);
-//                out.println(roomName + " " + from_nick + " " + to_nick + " " + last_sendMsg + " " + readCount + " " + room_Date);
+                // 클라이언트에게 채팅방 목록을 전송
+                out.println(roomName + " " + from_nick + " " + to_nick + " " + last_sendMsg + " " + readCount + " " + room_Date);
             }
 
         } catch (Exception e) {
