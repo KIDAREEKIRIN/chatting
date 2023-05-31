@@ -46,7 +46,7 @@ public class ClientManagerThread extends Thread {
             // 클라이언트의 이름이 비어있거나, 이미 존재하는 이름인 경우
             while (clientName.length() == 0 || server.clients.containsKey(clientName)) { // 클라이언트의 이름이 비어있거나, 이미 존재하는 이름인 경우
                 // 클라이언트에게 이름을 입력하라는 메시지 전송 (println() 메소드를 사용하여 개행)
-                out.println("Enter your name:");
+//                out.println("Enter your name:");
                 // 클라이언트로부터 이름을 받아옴 (trim() 메소드를 사용하여 공백 제거)
                 clientName = in.readLine().trim();
             }
@@ -61,9 +61,9 @@ public class ClientManagerThread extends Thread {
             // 채팅방 선택
             while (true) { // 채팅방을 선택할 때까지 반복
                 // 채팅방 목록 조회
-                selectRoom(clientName);
+//                selectRoom(clientName);
                 // 클라이언트에게 채팅방 이름을 입력하라는 메시지 전송
-                out.println("Enter room name:");
+//                out.println("Enter room name:");
                 // 클라이언트로부터 채팅방 이름을 받아옴
                 String roomName = in.readLine().trim();
                 // 채팅방이 존재하는지 확인
