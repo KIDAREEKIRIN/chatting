@@ -1,6 +1,7 @@
 package Ex6.Server;
 
 import com.mysql.cj.jdbc.ConnectionImpl;
+import com.mysql.cj.xdevapi.JsonArray;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -104,7 +105,6 @@ public class ClientManagerThread extends Thread {
                 }
 
             }
-
 
             // 클라이언트로부터 메시지 받아서 브로드캐스트
             String message; // 클라이언트로부터 받은 메시지를 저장할 변수.
