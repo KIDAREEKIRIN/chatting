@@ -1,11 +1,5 @@
 package Ex6.Server;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 //public class JDBCExample { // 시작.
 //    public static void main(String[] args) {
 //        Connection connection = null; //    데이터베이스와 연결을 위한 객체.

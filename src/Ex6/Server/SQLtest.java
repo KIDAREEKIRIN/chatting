@@ -1,7 +1,5 @@
 package Ex6.Server;
 
-import java.sql.*;
-
 public class SQLtest {
 //    // JDBC 부분.
 //    Connection connection = null; //    데이터베이스와 연결을 위한 객체.

@@ -1,7 +1,6 @@
 package Ex6.Server;
 
-import com.mysql.cj.jdbc.ConnectionImpl;
-import com.mysql.cj.xdevapi.JsonArray;
+import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,7 +9,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientManagerThread extends Thread {
 
@@ -61,10 +61,6 @@ public class ClientManagerThread extends Thread {
 
             // 채팅방 선택
             while (true) { // 채팅방을 선택할 때까지 반복
-                // 채팅방 목록 조회
-//                selectRoom(clientName);
-                // 클라이언트에게 채팅방 이름을 입력하라는 메시지 전송
-//                out.println("Enter room name:");
                 // 클라이언트로부터 채팅방 이름을 받아옴
                 String roomName = in.readLine().trim();
                 // 채팅방이 존재하는지 확인
@@ -81,21 +77,6 @@ public class ClientManagerThread extends Thread {
                     System.out.println(chatRoom.clients.keySet());
                     // 클라이언트에게 채팅방에 입장했음을 알림
                     out.println(clientName + "님, " + roomName + "에 입장하셨습니다.");
-                    // 방이름이 존재하면 채팅방 만들면 안됨 -> 서버에서 불러오기.
-//                    if(chatRoom.getRoomName() == roomName){
-//                        System.out.println("이미 존재하는 방입니다.");
-//                        System.out.println(chatRoom.getRoomName()); // 방이름 출력
-//                        break;
-//                    } else {
-//
-//                        // 채팅방 선택 반복문 종료
-////                        break;
-//                    }
-//                    // 채팅방 생성
-//                    createRoom(roomName, clientName, managerName);
-//                    // 채팅방의 메시지 읽기 -> 출력.
-//                    readMsg(roomName);
-//                    // 채팅방 선택 반복문 종료
                     break;
 
                 } else { // 채팅방이 존재하지 않는 경우
@@ -168,18 +149,35 @@ public class ClientManagerThread extends Thread {
             Statement statement = connection.createStatement(); //
             ResultSet resultSet = statement.executeQuery(sql);
 
+            // 채팅방 목록을 저장할 리스트 생성
+//            List<ChatRoom> chatRoomList = new ArrayList<>();
+
             while (resultSet.next()) {
+                Integer room_id = resultSet.getInt("room_id");
                 String roomName = resultSet.getString("room_name");
                 String from_nick = resultSet.getString("from_nick");
                 String to_nick = resultSet.getString("to_nick");
                 String last_sendMsg = resultSet.getString("last_sendMsg");
                 String readCount = resultSet.getString("readCount");
                 String room_Date = resultSet.getString("room_Date");
+//
+//                ChatRoom chatRoom1 = new ChatRoom(room_id, roomName, from_nick, to_nick, last_sendMsg, readCount, room_Date, clients);
+//                chatRoomList.add(chatRoom1);
+//
+//                // 채팅방 목록 데이터를 JSON 형태로 변환
+//                Gson gson = new Gson();
+//                String chatRoomsJson = gson.toJson(chatRoomList);
+//
+//                // 클라이언트로 채팅방 목록 전송
+//                sendChatRoomsToClient(chatRoomsJson);
+
 
                 // 서버에서 채팅방 목록을 출력
-                System.out.println(roomName + " " + from_nick + " " + to_nick + " " + last_sendMsg + " " + readCount + " " + room_Date);
+                System.out.println(room_id + " " + roomName + " " + from_nick + " " + to_nick + " " + last_sendMsg + " " + readCount + " " + room_Date);
+//                System.out.println(roomName + " " + from_nick + " " + to_nick + " " + last_sendMsg + " " + readCount + " " + room_Date);
                 // 클라이언트에게 채팅방 목록을 전송
-                out.println(roomName + " " + from_nick + " " + to_nick + " " + last_sendMsg + " " + readCount + " " + room_Date);
+                out.println(room_id + " " + roomName + " " + from_nick + " " + to_nick + " " + last_sendMsg + " " + readCount + " " + room_Date);
+//                out.println(roomName + " " + from_nick + " " + to_nick + " " + last_sendMsg + " " + readCount + " " + room_Date);
             }
 
         } catch (Exception e) {
