@@ -1,6 +1,7 @@
 package Ex6.Server;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +13,8 @@ public class ChatRoom {
     String lastSendMsg;
     String readCount;
     String roomDate;
+    // 채팅방 목록을 저장하는 ArrayList
+    ArrayList<ChatRoom> chatRooms;
     private final String roomName; // 채팅방 이름 저장
     final HashMap<String, PrintWriter> clients; // 채팅방에 접속한 클라이언트 목록을 저장하는 HashMap 객체
 
