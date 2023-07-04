@@ -60,9 +60,10 @@ public class ClientManagerThread extends Thread {
             // 채팅방 선택
             boolean isFirstJoin = true; // 처음 입장하는지 여부를 확인하기 위한 변수
 
-            while (true) { // 채팅방을 선택할 때까지 반복
+            // 채팅방에 클라이언트가 처음 입장하는 경우 -> 처음과 처음이 아닌 경우를 구별하기.
+            while (true) {
                 // 해당 채팅방의 이름으로 불러오는 JDBC 채팅방 목록 코드 생성은 어떨까?
-                selectRoom(clientName);
+                selectRoom(clientName); // 채팅방 목록을 출력하고, 채팅방을 선택하도록 함 (selectRoom() 메소드 호출)
                 // 클라이언트로부터 채팅방 이름을 받아옴
                 String roomName = in.readLine().trim();
                 // 채팅방이 존재하는지 확인

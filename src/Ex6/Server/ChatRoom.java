@@ -6,15 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ChatRoom {
-    Integer roomId;
-//    String roomName;
-    String fromNick;
-    String toNick;
-    String lastSendMsg;
-    String readCount;
-    String roomDate;
     // 채팅방 목록을 저장하는 ArrayList
-    ArrayList<ChatRoom> chatRooms;
     private final String roomName; // 채팅방 이름 저장
     final HashMap<String, PrintWriter> clients; // 채팅방에 접속한 클라이언트 목록을 저장하는 HashMap 객체
 
@@ -23,16 +15,6 @@ public class ChatRoom {
         clients = new HashMap<>(); // 클라이언트 목록을 저장하는 HashMap 생성 (생성자 호출 시 생성)
     }
 
-//    public ChatRoom(Integer roomId, String roomName, String fromNick, String toNick, String lastSendMsg, String readCount, String roomDate, HashMap<String, PrintWriter> clients) {
-//        this.roomId = roomId;
-//        this.roomName = roomName;
-//        this.fromNick = fromNick;
-//        this.toNick = toNick;
-//        this.lastSendMsg = lastSendMsg;
-//        this.readCount = readCount;
-//        this.roomDate = roomDate;
-//        clients = new HashMap<>();
-//    }
 
     // 클라이언트 목록에 클라이언트 추가
     public synchronized void addClient(String clientName, PrintWriter out) {

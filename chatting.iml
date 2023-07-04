@@ -8,9 +8,8 @@
     <orderEntry type="jdk" jdkName="openjdk-20" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="mysql.connector.java" level="project" />
-    <orderEntry type="library" exported="" name="gson-2.10.1" level="project" />
-    <orderEntry type="library" exported="" name="io.socket.server" level="project" />
-    <orderEntry type="library" exported="" name="java.websocket.Java.WebSocket" level="project" />
-    <orderEntry type="library" name="io.socket.server1" level="project" />
+    <orderEntry type="library" name="gson-2.10.1" level="project" />
+    <orderEntry type="library" name="io.socket.server" level="project" />
+    <orderEntry type="library" name="java.websocket.Java.WebSocket" level="project" />
   </component>
 </module>
