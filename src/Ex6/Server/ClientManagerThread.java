@@ -19,6 +19,7 @@ public class ClientManagerThread extends Thread {
     private PrintWriter out; // 클라이언트에게 데이터를 전송하기 위한 PrintWriter
     private BufferedReader in; // 클라이언트로부터 데이터를 받기 위한 BufferedReader
     private String clientName = ""; // 클라이언트의 이름
+    private String roomName = ""; // 클라이언트가 속한 채팅방의 이름
     private ChatRoom chatRoom; // 클라이언트가 속한 채팅방
     private String managerName = "asdf"; // 채팅방 관리자의 이름
 
@@ -52,21 +53,22 @@ public class ClientManagerThread extends Thread {
             // 서버에 클라이언트의 이름과 PrintWriter를 저장 (추가)
             server.addClient(clientName, out);
             // 클라이언트에게 이름이 저장되었음을 알림 (println() 메소드를 사용하여 개행)
-            out.println("Name accepted: " + clientName);
+            out.println("해당 채팅방에 접속한 아이디 : " + clientName);
             // 서버 콘솔에 클라이언트의 이름이 저장되었음을 알림 (println() 메소드를 사용하여 개행)
-            System.out.println("Name accepted: " + clientName);
+            System.out.println("해당 채팅방에 접속한 아이디 : " + clientName);
             // clientName -> 채팅방을 만든 아이디.
 
             // 채팅방 선택
             boolean isFirstJoin = true; // 처음 입장하는지 여부를 확인하기 위한 변수
 
-            // 채팅방에 클라이언트가 처음 입장하는 경우 -> 처음과 처음이 아닌 경우를 구별하기.
+            // 채팅방에 클라이언트가 처음 입장하는 경우 -> 처음과 처음이 아닌 경우를 구별하기 // 꼭 구별해야해? 쓰벌?
             while (true) {
                 // 해당 채팅방의 이름으로 불러오는 JDBC 채팅방 목록 코드 생성은 어떨까?
-                selectRoom(clientName); // 채팅방 목록을 출력하고, 채팅방을 선택하도록 함 (selectRoom() 메소드 호출)
+                // 채팅방 목록을 불러오는 JDBC 코드
+                selectRoom(clientName);
                 // 클라이언트로부터 채팅방 이름을 받아옴
-                String roomName = in.readLine().trim();
-                // 채팅방이 존재하는지 확인
+                roomName = in.readLine().trim();
+                // 채팅방이 존재하는지 확인 (채팅방이 존재하는 경우에만 채팅방에 입장)
                 chatRoom = server.getChatRoom(roomName);
                 // 채팅방의 메시지 읽기 -> 출력.
                 readMsg(roomName);
@@ -74,8 +76,9 @@ public class ClientManagerThread extends Thread {
                 if (chatRoom != null) {
                     // 채팅방에 클라이언트 추가
                     chatRoom.addClient(clientName, out);
+                    System.out.println("채팅방에 클라이언트 추가 완료");
                     // 서버에 채팅방 이름 출력. (채팅방이 존재하지 않는 경우에도 출력됨)
-                    System.out.println("Room joined: " + roomName);
+                    System.out.println("해당 채팅방에 입장 : " + roomName);
                     // 클라이언트에게 채팅방에 입장했음을 알림
                     out.println(clientName + "님, " + roomName + "에 입장하셨습니다.");
                     break;
@@ -84,37 +87,21 @@ public class ClientManagerThread extends Thread {
                     out.println("채팅방이 없어요.."); // 클라이언트에게 채팅방이 존재하지 않음을 알림
                     // 채팅방 생성 -> 채팅방이 없으니 채팅방을 생성.
                     createRoom(roomName, clientName, managerName);
+
+                    // 수정한 부분.
+                    // 새로 생성된 채팅방에 클라이언트 추가
+                    chatRoom = server.getChatRoom(roomName);
+                    chatRoom.addClient(clientName, out);
+                    System.out.println("채팅방에 클라이언트 추가 완료");
+                    // 서버에 채팅방 이름 출력
+                    System.out.println("해당 채팅방에 입장 : " + roomName);
+                    // 클라이언트에게 새로운 채팅방에 입장했음을 알림
+                    out.println(clientName + "님, 새로운 채팅방 " + roomName + "을(를) 만들고 입장하셨습니다.");
+                    // 추가한 부분.
+                    break;
                 }
             }
 
-//            // 채팅방 선택
-//            boolean isFirstJoin = true; // 처음 입장하는지 여부를 확인하기 위한 변수
-//            while (isFirstJoin || chatRoom == null) { // 채팅방을 선택할 때까지 반복
-//                // 클라이언트로부터 채팅방 이름을 받아옴
-//                String roomName = in.readLine().trim();
-//
-//                if (isFirstJoin) {
-//                    // 채팅방이 존재하는지 확인
-//                    chatRoom = server.getChatRoom(roomName);
-//                    // 채팅방이 존재하는 경우
-//                    if (chatRoom != null) {
-//                        // 채팅방에 클라이언트 추가
-//                        chatRoom.addClient(clientName, out);
-//                        // 서버에 채팅방 이름 출력. (채팅방이 존재하지 않는 경우에도 출력됨)
-//                        System.out.println("Room joined: " + roomName);
-//                        // 클라이언트에게 채팅방에 입장했음을 알림
-//                        out.println(clientName + "님, " + roomName + "에 입장하셨습니다.");
-//                    } else { // 채팅방이 존재하지 않는 경우
-//                        out.println("채팅방이 없어요.."); // 클라이언트에게 채팅방이 존재하지 않음을 알림
-//                        // 채팅방 생성
-//                        createRoom(roomName, clientName, managerName);
-//                    }
-//                    isFirstJoin = false; // 처음 입장 여부 업데이트
-//                } else {
-//                    // 클라이언트가 재입장하는 경우 채팅방 목록을 다시 불러옴
-//                    selectRoom(clientName);
-//                }
-//            }
 
             String message; // 클라이언트로부터 받은 메시지를 저장하기 위한 변수
             // 클라이언트로부터 메시지를 받아오는 과정에서 오류가 발생할 수 있으므로 try-catch문 사용
@@ -128,8 +115,6 @@ public class ClientManagerThread extends Thread {
                     // DB에 메시지 저장하기. Create.
                     insertMsg(chatRoom.getRoomName(), message, clientName);
                     // 채팅방 이름 출력하기.
-//                    System.out.println(chatRoom.getRoomName());
-//                    insertMsg(chatRoom.getRoomName(), message, clientName);
                     // 클라이언트에게 메시지를 전송
 //                    out.println(clientName + ": " + message);
                 }
@@ -137,50 +122,13 @@ public class ClientManagerThread extends Thread {
                 e.printStackTrace(); // 오류 발생 지점을 출력
             }
 
-
-//            // 채팅방 선택
-//            while (true) { // 채팅방을 선택할 때까지 반복
-//                // 해당 채팅방의 이름으로 불러오는 JDBC 채팅방 목록 코드 생성은 어떨까?
-//                selectRoom(clientName);
-//                // 클라이언트로부터 채팅방 이름을 받아옴
-//                String roomName = in.readLine().trim();
-//                // 채팅방이 존재하는지 확인
-//                chatRoom = server.getChatRoom(roomName);
-//                // 채팅방의 메시지 읽기 -> 출력.
-//                readMsg(roomName);
-//                // 채팅방이 존재하는 경우
-//                if (chatRoom != null) {
-//                    // 채팅방에 클라이언트 추가
-//                    chatRoom.addClient(clientName, out);
-//                    // 서버에 채팅방 이름 출력. (채팅방이 존재하지 않는 경우에도 출력됨)
-//                    System.out.println("Room joined: " + roomName);
-//                    // 채팅방에 있는 클라이언트들의 이름 모두 출력 -> [] 형태로 출력됨.
-//                    System.out.println(chatRoom.clients.keySet());
-//                    // 클라이언트에게 채팅방에 입장했음을 알림
-//                    out.println(clientName + "님, " + roomName + "에 입장하셨습니다.");
-//                    break;
-//
-//                } else { // 채팅방이 존재하지 않는 경우
-//                    out.println("채팅방이 없어요.."); // 클라이언트에게 채팅방이 존재하지 않음을 알림
-//                    // 채팅방 생성 -> 채팅방이 없으니 채팅방을 생성.
-//                    createRoom(roomName, clientName, managerName);
-//                }
-//
-//            }
-
-
-
         } catch (IOException e) { // 데이터를 주고받는 과정에서 오류가 발생한 경우
             System.out.println("Error handling client " + e.getMessage()); // 오류 메시지 출력
         } finally { // 클라이언트와 통신이 종료되었을 때 실행되는 코드 (try-catch문을 빠져나가기 전에 실행됨)
             // 클라이언트와 통신을 위한 Socket을 닫음
-            // clientSocket.close();
             server.removeClient(clientName); // 서버에서 클라이언트를 제거
             chatRoom.removeClient(clientName); // 채팅방에서 클라이언트를 제거
             System.out.println(clientName + " 님이 채팅방을 나갔습니다.");
-            //            catch (IOException e) { // Socket을 닫는 과정에서 오류가 발생한 경우
-//                System.out.println("Error closing socket " + e.getMessage()); // 오류 메시지 출력
-//            }
         }
     }
 
